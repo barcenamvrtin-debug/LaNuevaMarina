@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>La Nueva Marina — Panadería tradicional en Valparaíso</title>
+<meta name="description" content="Pan amasado, marraqueta y pastelería artesanal horneados a diario en el corazón de Valparaíso desde 1962.">
+
+<!-- Tailwind (CDN, modo play para prototipo — para producción se recomienda compilar Tailwind con un build step) -->
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          masa:    '#F6EEDF', // crema base
+          migote:  '#FBF6EC', // crema clara (tarjetas)
+          tierra:  '#3B2A1F', // texto principal / marrón oscuro
+          costra:  '#8C5A34', // marrón medio
+          miel:    '#E2963A', // acento cálido (naranja/ámbar)
+          mielosc: '#C97826',
+          marina:  '#1F4E4A', // acento marino (guiño al nombre y al puerto)
+          marinosc:'#153635',
+        },
+        fontFamily: {
+          display: ['Fraunces', 'serif'],
+          body: ['"Work Sans"', 'sans-serif'],
+        },
+      }
+    }
+  }
+</script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500&family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+  html { scroll-behavior: smooth; }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; scroll-behavior: auto !important; }
+  }
+
+  body { background-color: #F6EEDF; }
+
+  /* ---- Borde tipo "bolsa de papel de panadería" entre secciones (en vez de línea recta) ---- */
+  .torn-edge-down { position: relative; }
+  .torn-edge-down::after {
+    content: "";
+    position: absolute; left: 0; right: 0; bottom: -1px; height: 28px;
+    background-color: inherit;
+    -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 40' preserveAspectRatio='none'%3E%3Cpath d='M0 40 L0 12 Q20 0 40 10 T80 8 T120 14 T160 4 T200 12 T240 6 T280 16 T320 4 T360 12 T400 6 T440 14 T480 4 T520 10 T560 6 T600 14 T640 4 T680 12 T720 6 T760 16 T800 4 T840 12 T880 6 T920 14 T960 4 T1000 10 T1040 6 T1080 14 T1120 4 T1160 12 T1200 8 L1200 40 Z'/%3E%3C/svg%3E");
+    mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 40' preserveAspectRatio='none'%3E%3Cpath d='M0 40 L0 12 Q20 0 40 10 T80 8 T120 14 T160 4 T200 12 T240 6 T280 16 T320 4 T360 12 T400 6 T440 14 T480 4 T520 10 T560 6 T600 14 T640 4 T680 12 T720 6 T760 16 T800 4 T840 12 T880 6 T920 14 T960 4 T1000 10 T1040 6 T1080 14 T1120 4 T1160 12 T1200 8 L1200 40 Z'/%3E%3C/svg%3E");
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    z-index: 5;
+  }
+
+  /* ---- Sello de panadería (badge 4.7★) ---- */
+  .sello {
+    border: 2px dashed rgba(246,238,223,0.55);
+    border-radius: 9999px;
+  }
+
+  /* ---- Vapor animado del horno (decorativo, sutil) ---- */
+  .steam-wrap { pointer-events: none; }
+  .steam-line {
+    animation: steamRise 4s ease-in-out infinite;
+    transform-origin: bottom center;
+  }
+  .steam-line:nth-child(2) { animation-delay: 1s; }
+  .steam-line:nth-child(3) { animation-delay: 2s; }
+  @keyframes steamRise {
+    0%   { opacity: 0; transform: translateY(0) scaleX(1); }
+    20%  { opacity: 0.55; }
+    80%  { opacity: 0.15; }
+    100% { opacity: 0; transform: translateY(-70px) scaleX(1.4); }
+  }
+
+  /* ---- Reveal on scroll ---- */
+  .reveal { opacity: 0; transform: translateY(18px); transition: opacity 0.7s ease, transform 0.7s ease; }
+  .reveal.is-visible { opacity: 1; transform: translateY(0); }
+
+  /* ---- Imagen con degradado de respaldo si falla la carga ---- */
+  .img-fallback { background: linear-gradient(135deg, #C97826, #8C5A34); }
+
+  ::selection { background: #E2963A; color: #3B2A1F; }
+
+  /* Foco visible accesible */
+  a:focus-visible, button:focus-visible {
+    outline: 3px solid #E2963A;
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+</style>
+</head>
+
+<body class="font-body text-tierra antialiased">
+
+<!-- ============ HEADER ============ -->
+<header id="site-header" class="fixed top-0 left-0 right-0 z-50 transition-colors duration-300 bg-masa/90 backdrop-blur-md border-b border-costra/10">
+  <div class="max-w-7xl mx-auto px-5 sm:px-8 flex items-center justify-between h-16 sm:h-20">
+    <a href="#inicio" class="flex items-center gap-2 shrink-0">
+      <span class="font-display italic text-2xl sm:text-3xl font-semibold text-tierra">La Nueva Marina</span>
+    </a>
+
+    <nav class="hidden lg:flex items-center gap-8 font-medium text-sm uppercase tracking-wide text-tierra/80">
+      <a href="#inicio" class="hover:text-miel transition-colors">Inicio</a>
+      <a href="#panes" class="hover:text-miel transition-colors">Panes</a>
+      <a href="#pasteleria" class="hover:text-miel transition-colors">Pastelería</a>
+      <a href="#confianza" class="hover:text-miel transition-colors">Reseñas</a>
+      <a href="#ubicacion" class="hover:text-miel transition-colors">Ubicación</a>
+    </nav>
+
+    <a href="https://wa.me/56945988286?text=Hola%20La%20Nueva%20Marina%2C%20quiero%20hacer%20un%20pedido"
+       target="_blank" rel="noopener"
+       class="hidden lg:inline-flex items-center gap-2 bg-marina hover:bg-marinosc text-masa px-5 py-2.5 rounded-full text-sm font-semibold transition-colors">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.71.45 3.38 1.3 4.85L2 22l5.36-1.4a9.9 9.9 0 0 0 4.68 1.19h.01c5.46 0 9.9-4.45 9.9-9.9C22 6.45 17.5 2 12.04 2Zm5.8 14.16c-.24.68-1.4 1.3-1.94 1.38-.5.08-1.13.11-1.83-.12-.42-.13-.96-.31-1.66-.6-2.92-1.26-4.82-4.2-4.97-4.4-.15-.2-1.19-1.58-1.19-3.02 0-1.43.75-2.14 1.02-2.43.27-.29.58-.36.78-.36.2 0 .39 0 .56.01.18.01.42-.07.66.5.24.58.82 2 .9 2.15.07.15.12.32.02.52-.1.2-.15.32-.29.5-.15.18-.31.4-.44.53-.15.15-.3.31-.13.6.17.29.75 1.24 1.62 2 1.11.99 2.05 1.3 2.34 1.45.29.15.46.12.63-.07.17-.2.72-.85.92-1.14.2-.29.39-.24.65-.14.27.1 1.68.79 1.97.94.29.14.48.21.55.33.07.12.07.68-.17 1.35Z"/></svg>
+      Pedir ahora
+    </a>
+
+    <button id="menu-toggle" class="lg:hidden p-2 -mr-2 text-tierra" aria-label="Abrir menú" aria-expanded="false" aria-controls="mobile-menu">
+      <svg id="icon-open" xmlns="http://www.w3.org/2000/svg" class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/></svg>
+      <svg id="icon-close" xmlns="http://www.w3.org/2000/svg" class="w-7 h-7 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+    </button>
+  </div>
+
+  <!-- Menú móvil -->
+  <div id="mobile-menu" class="lg:hidden hidden bg-masa border-t border-costra/10 px-5 pb-6 pt-2">
+    <nav class="flex flex-col gap-1 font-medium text-tierra/90">
+      <a href="#inicio" class="py-3 border-b border-costra/10">Inicio</a>
+      <a href="#panes" class="py-3 border-b border-costra/10">Panes</a>
+      <a href="#pasteleria" class="py-3 border-b border-costra/10">Pastelería</a>
+      <a href="#confianza" class="py-3 border-b border-costra/10">Reseñas</a>
+      <a href="#ubicacion" class="py-3">Ubicación</a>
+    </nav>
+    <a href="https://wa.me/56945988286?text=Hola%20La%20Nueva%20Marina%2C%20quiero%20hacer%20un%20pedido" target="_blank" rel="noopener"
+       class="mt-4 inline-flex w-full justify-center items-center gap-2 bg-marina text-masa px-5 py-3 rounded-full font-semibold">
+      Pedir por WhatsApp
+    </a>
+  </div>
+</header>
+
+<!-- ============ HERO ============ -->
+<section id="inicio" class="relative min-h-[92vh] flex items-end torn-edge-down" style="background-color:#2A1B12;">
+  <div class="absolute inset-0 img-fallback">
+    <img src="https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&w=1600&q=75"
+         alt="Horno tradicional con panes recién horneados"
+         class="w-full h-full object-cover opacity-90"
+         onerror="this.style.display='none'">
+  </div>
+  <div class="absolute inset-0 bg-gradient-to-t from-[#2A1B12] via-[#2A1B12]/70 to-[#2A1B12]/20"></div>
+  <div class="absolute inset-0 bg-gradient-to-r from-[#2A1B12]/60 via-transparent to-transparent"></div>
+
+  <!-- Vapor decorativo -->
+  <div class="steam-wrap hidden md:block absolute right-[12%] top-[18%] w-16 h-40">
+    <svg viewBox="0 0 60 160" class="w-full h-full">
+      <path class="steam-line" d="M20 160 Q5 130 25 100 Q40 75 22 45 Q10 25 28 0" stroke="#F6EEDF" stroke-width="2.5" fill="none" opacity="0.4" stroke-linecap="round"/>
+      <path class="steam-line" d="M40 160 Q25 130 45 100 Q58 75 40 45 Q28 25 46 0" stroke="#F6EEDF" stroke-width="2.5" fill="none" opacity="0.35" stroke-linecap="round"/>
+      <path class="steam-line" d="M30 160 Q15 130 35 100 Q48 75 30 45 Q18 25 36 0" stroke="#F6EEDF" stroke-width="2" fill="none" opacity="0.3" stroke-linecap="round"/>
+    </svg>
+  </div>
+
+  <div class="relative z-10 max-w-7xl mx-auto px-5 sm:px-8 pb-24 sm:pb-28 pt-40 w-full">
+    <p class="reveal uppercase tracking-[0.25em] text-miel font-semibold text-xs sm:text-sm mb-5">Panadería de barrio en Valparaíso · desde 1962</p>
+    <h1 class="reveal font-display text-4xl sm:text-6xl lg:text-7xl leading-[1.05] text-masa max-w-3xl">
+      El pan que huele<br class="hidden sm:block"> a puerto y a <span class="italic text-miel">hogar</span>.
+    </h1>
+    <p class="reveal max-w-xl mt-6 text-masa/85 text-base sm:text-lg leading-relaxed">
+      Cada mañana encendemos el horno de leña antes de que el cerro despierte. Marraqueta crocante, pan amasado tibio y pastelería hecha como siempre se hizo: con tiempo, harina y cariño.
+    </p>
+    <div class="reveal mt-9 flex flex-col sm:flex-row gap-4">
+      <a href="#panes" class="inline-flex justify-center items-center gap-2 bg-miel hover:bg-mielosc text-tierra px-7 py-3.5 rounded-full font-semibold transition-colors">
+        Ver el menú
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 12H5m14 0-6-6m6 6-6 6"/></svg>
+      </a>
+      <a href="https://wa.me/56945988286?text=Hola%20La%20Nueva%20Marina%2C%20quiero%20hacer%20un%20pedido" target="_blank" rel="noopener"
+         class="inline-flex justify-center items-center gap-2 border-2 border-masa/70 hover:border-masa text-masa px-7 py-3.5 rounded-full font-semibold transition-colors">
+        Pedir por WhatsApp
+      </a>
+      <!-- Botón de Instagram -->
+      <a href="https://www.instagram.com/lanuevamarina/" target="_blank" rel="noopener"
+         class="inline-flex justify-center items-center gap-2 border-2 border-masa/70 hover:border-masa text-masa px-7 py-3.5 rounded-full font-semibold transition-colors">
+        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg>
+        Instagram
+      </a>
+    </div>
+  </div>
+</section>
+
+<<!-- ============ PRODUCTOS: PANES FRESCOS ============ -->
+<section id="panes" class="py-24 sm:py-28 bg-masa">
+  <div class="max-w-7xl mx-auto px-5 sm:px-8">
+    <div class="reveal max-w-2xl mb-14">
+      <p class="uppercase tracking-[0.25em] text-costra font-semibold text-xs sm:text-sm mb-3">Del horno a tu mesa</p>
+      <h2 class="font-display text-3xl sm:text-5xl text-tierra">Panes Frescos</h2>
+      <p class="mt-4 text-tierra/70 text-base sm:text-lg">Amasados a mano cada madrugada, con la receta de siempre y sin apuro.</p>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-7">
+
+      <!-- Batidos -->
+      <article class="reveal group bg-migote rounded-2xl overflow-hidden shadow-[0_10px_30px_-12px_rgba(59,42,31,0.25)] hover:shadow-[0_18px_40px_-14px_rgba(59,42,31,0.35)] transition-shadow">
+        <div class="h-52 overflow-hidden img-fallback">
+          <img src="Images/Pan_Batido_en_Viña_del_Mar.jpg" alt="Pan batido recién horneado" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" onerror="this.style.display='none'">
+        </div>
+        <div class="p-6">
+          <h3 class="font-display text-xl text-tierra mb-1.5">Batidos</h3>
+          <p class="text-tierra/65 text-sm leading-relaxed mb-4">Crocante por fuera, suave por dentro. La reina de la mesa chilena, horneada tres veces al día.</p>
+          <span class="text-miel font-semibold text-sm">Desde $3.200 / Kilo</span>
+        </div>
+      </article>
+
+      <!-- Pan Amasado -->
+      <article class="reveal group bg-migote rounded-2xl overflow-hidden shadow-[0_10px_30px_-12px_rgba(59,42,31,0.25)] hover:shadow-[0_18px_40px_-14px_rgba(59,42,31,0.35)] transition-shadow">
+        <div class="h-52 overflow-hidden img-fallback">
+          <img src="Images/Amasado.jpg" alt="Pan amasado tradicional" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" onerror="this.style.display='none'">
+        </div>
+        <div class="p-6">
+          <h3 class="font-display text-xl text-tierra mb-1.5">Pan Amasado</h3>
+          <p class="text-tierra/65 text-sm leading-relaxed mb-4">Nuestra receta de familia, tal cual se hacía antiguamente. Ideal recién salido, con mantequilla.</p>
+          <span class="text-miel font-semibold text-sm">Desde $3.500 / kg</span>
+        </div>
+      </article>
+
+      <!-- Hallulla -->
+      <article class="reveal group bg-migote rounded-2xl overflow-hidden shadow-[0_10px_30px_-12px_rgba(59,42,31,0.25)] hover:shadow-[0_18px_40px_-14px_rgba(59,42,31,0.35)] transition-shadow">
+        <div class="h-52 overflow-hidden img-fallback">
+          <img src="Images/hallula.jpg" alt="Hallullas doradas" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" onerror="this.style.display='none'">
+        </div>
+        <div class="p-6">
+          <h3 class="font-display text-xl text-tierra mb-1.5">Hallulla</h3>
+          <p class="text-tierra/65 text-sm leading-relaxed mb-4">Suave, dorada y hecha para el desayuno. Perfecta con palta o mermelada casera.</p>
+          <span class="text-miel font-semibold text-sm">Desde $3.500 / Kg</span>
+        </div>
+      </article>
+
+      <!-- Pan de Completo -->
+      <article class="reveal group bg-migote rounded-2xl overflow-hidden shadow-[0_10px_30px_-12px_rgba(59,42,31,0.25)] hover:shadow-[0_18px_40px_-14px_rgba(59,42,31,0.35)] transition-shadow">
+        <div class="h-52 overflow-hidden img-fallback">
+          <img src="Images/Completo.jpg" alt="Pan de completo" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" onerror="this.style.display='none'">
+        </div>
+        <div class="p-6">
+          <h3 class="font-display text-xl text-tierra mb-1.5">Pan de Completo</h3>
+          <p class="text-tierra/65 text-sm leading-relaxed mb-4">Suave y con la consistencia ideal para armar los mejores completos caseros.</p>
+          <span class="text-miel font-semibold text-sm">Desde $3.500 / kg</span>
+        </div>
+      </article>
+
+      <!-- Chocositos -->
+      <article class="reveal group bg-migote rounded-2xl overflow-hidden shadow-[0_10px_30px_-12px_rgba(59,42,31,0.25)] hover:shadow-[0_18px_40px_-14px_rgba(59,42,31,0.35)] transition-shadow">
+        <div class="h-52 overflow-hidden img-fallback">
+          <img src="Images/CHOCOSO.jpg" alt="Chocositos" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" onerror="this.style.display='none'">
+        </div>
+        <div class="p-6">
+          <h3 class="font-display text-xl text-tierra mb-1.5">Chocositos</h3>
+          <p class="text-tierra/65 text-sm leading-relaxed mb-4">Especialidad de la casa, crujientes por fuera y perfectos para cualquier once.</p>
+          <span class="text-miel font-semibold text-sm">Desde $3.500 / Kg</span>
+        </div>
+      </article>
+
+      <!-- Pan de Molde -->
+      <article class="reveal group bg-migote rounded-2xl overflow-hidden shadow-[0_10px_30px_-12px_rgba(59,42,31,0.25)] hover:shadow-[0_18px_40px_-14px_rgba(59,42,31,0.35)] transition-shadow">
+        <div class="h-52 overflow-hidden img-fallback">
+          <img src="Images/Pn de molde.jpg" alt="Pan de molde casero" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" onerror="this.style.display='none'">
+        </div>
+        <div class="p-6">
+          <h3 class="font-display text-xl text-tierra mb-1.5">Pan de Molde Casero</h3>
+          <p class="text-tierra/65 text-sm leading-relaxed mb-4">Suave y parejo, sin conservantes. El favorito de los sándwiches de la casa.</p>
+          <span class="text-miel font-semibold text-sm">Desde $2.800 / unidad</span>
+        </div>
+      </article>
+
+    </div>
+  </div>
+</section>
+
+<!-- ============ SECCIÓN MAYORISTA (REPARTO A CERROS) ============ -->
+<section id="mayorista" class="py-24 sm:py-28 bg-tierra text-masa relative overflow-hidden">
+  <!-- Detalle decorativo de fondo -->
+  <div class="absolute inset-0 opacity-5 bg-[radial-gradient(#F6EEDF_1px,transparent_1px)] [background-size:16px_16px]"></div>
+
+  <div class="relative z-10 max-w-7xl mx-auto px-5 sm:px-8">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+      
+      <!-- Texto explicativo -->
+      <div class="reveal">
+        <p class="uppercase tracking-[0.25em] text-miel font-semibold text-xs sm:text-sm mb-3">Aliados del comercio local</p>
+        <h2 class="font-display text-3xl sm:text-4xl lg:text-5xl text-masa leading-tight">
+          Llevamos el pan fresco al por mayor a los cerros de Valparaíso
+        </h2>
+        <p class="mt-5 text-masa/80 text-base sm:text-lg leading-relaxed">
+          ¿Tienes un almacén, minimarket o negocio en los cerros y necesitas asegurar pan fresco cada madrugada? Trabajamos con precios preferenciales para abastecer a todo el puerto con entregas puntuales.
+        </p>
+        
+        <ul class="mt-6 space-y-3 text-sm text-masa/90">
+          <li class="flex items-center gap-3">
+            <svg class="w-5 h-5 text-miel shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+            <span>Despachos tempranos antes de que abra tu local.</span>
+          </li>
+          <li class="flex items-center gap-3">
+            <svg class="w-5 h-5 text-miel shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+            <span>Precios especiales y flexibles para volumen mayorista.</span>
+          </li>
+          <li class="flex items-center gap-3">
+            <svg class="w-5 h-5 text-miel shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+            <span>Pan amasado, batidos y hallullas siempre crujientes.</span>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Tarjeta de llamada a la acción mayorista -->
+      <div class="reveal bg-marinosc/60 border border-masa/15 rounded-3xl p-8 sm:p-10 shadow-2xl flex flex-col items-start">
+        <span class="bg-miel/20 text-miel text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-wider mb-4">Comercios y Almacenes</span>
+        <h3 class="font-display text-2xl sm:text-3xl text-masa mb-3">¿Abasteces un negocio?</h3>
+        <p class="text-masa/70 text-sm leading-relaxed mb-8">
+          Escríbenos directamente por WhatsApp para coordinar rutas, stock diario y tarifas especiales para tu local.
+        </p>
+        <a href="https://wa.me/56945988286?text=Hola%20La%20Nueva%20Marina%2C%20tengo%20un%20negocio%20en%20el%20cerro%20y%20quiero%20consultar%20por%20reparto%20al%20por%20mayor" 
+           target="_blank" rel="noopener"
+           class="inline-flex justify-center items-center gap-2 bg-miel hover:bg-mielosc text-tierra w-full py-4 rounded-full font-bold text-base transition-colors shadow-lg">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.71.45 3.38 1.3 4.85L2 22l5.36-1.4a9.9 9.9 0 0 0 4.68 1.19h.01c5.46 0 9.9-4.45 9.9-9.9C22 6.45 17.5 2 12.04 2Zm5.8 14.16c-.24.68-1.4 1.3-1.94 1.38-.5.08-1.13.11-1.83-.12-.42-.13-.96-.31-1.66-.6-2.92-1.26-4.82-4.2-4.97-4.4-.15-.2-1.19-1.58-1.19-3.02 0-1.43.75-2.14 1.02-2.43.27-.29.58-.36.78-.36.2 0 .39 0 .56.01.18.01.42-.07.66.5.24.58.82 2 .9 2.15.07.15.12.32.02.52-.1.2-.15.32-.29.5-.15.18-.31.4-.44.53-.15.15-.3.31-.13.6.17.29.75 1.24 1.62 2 1.11.99 2.05 1.3 2.34 1.45.29.15.46.12.63-.07.17-.2.72-.85.92-1.14.2-.29.39-.24.65-.14.27.1 1.68.79 1.97.94.29.14.48.21.55.33.07.12.07.68-.17 1.35Z"/></svg>
+          Cotizar reparto mayorista por WhatsApp
+        </a>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ============ PRODUCTOS: PASTELERÍA ARTESANAL ============ -->
+<section id="pasteleria" class="py-24 sm:py-28 bg-migote/60">
+  <div class="max-w-7xl mx-auto px-5 sm:px-8">
+    <div class="reveal max-w-2xl mb-14">
+      <p class="uppercase tracking-[0.25em] text-costra font-semibold text-xs sm:text-sm mb-3">Para endulzar la tarde</p>
+      <h2 class="font-display text-3xl sm:text-5xl text-tierra">Pastelería Artesanal</h2>
+      <p class="mt-4 text-tierra/70 text-base sm:text-lg">Recetas de casa, horneadas en pequeños lotes para que siempre estén frescas.</p>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-7">
+
+      <!-- Rollos de Canela -->
+      <article class="reveal group bg-masa rounded-2xl overflow-hidden shadow-[0_10px_30px_-12px_rgba(59,42,31,0.25)] hover:shadow-[0_18px_40px_-14px_rgba(59,42,31,0.35)] transition-shadow">
+        <div class="h-52 overflow-hidden img-fallback">
+          <img src="images/Pasteles/rollos.jpg" alt="Rollos de canela" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" onerror="this.style.display='none'">
+        </div>
+        <div class="p-6">
+          <h3 class="font-display text-xl text-tierra mb-1.5">Rollos de Canela</h3>
+          <p class="text-tierra/65 text-sm leading-relaxed mb-4">Esponjosos, tibios y con una capa generosa. El aroma perfecto para acompañar tu café.</p>
+          <span class="text-miel font-semibold text-sm">Desde $1.000 / unidad</span>
+        </div>
+      </article>
+
+      <!-- Calzones Rotos -->
+      <article class="reveal group bg-masa rounded-2xl overflow-hidden shadow-[0_10px_30px_-12px_rgba(59,42,31,0.25)] hover:shadow-[0_18px_40px_-14px_rgba(59,42,31,0.35)] transition-shadow">
+        <div class="h-52 overflow-hidden img-fallback">
+          <img src="images/Pasteles/calzones.jpg" alt="Calzones rotos" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" onerror="this.style.display='none'">
+        </div>
+        <div class="p-6">
+          <h3 class="font-display text-xl text-tierra mb-1.5">Calzones Rotos</h3>
+          <p class="text-tierra/65 text-sm leading-relaxed mb-4">La receta clásica de la abuela, espolvoreados con azúcar flor. Tradición pura en cada bocado.</p>
+          <span class="text-miel font-semibold text-sm">Desde $1.000 / 3 Unidades</span>
+        </div>
+      </article>
+
+      <!-- Donas -->
+      <article class="reveal group bg-masa rounded-2xl overflow-hidden shadow-[0_10px_30px_-12px_rgba(59,42,31,0.25)] hover:shadow-[0_18px_40px_-14px_rgba(59,42,31,0.35)] transition-shadow">
+        <div class="h-52 overflow-hidden img-fallback">
+          <img src="images/Pasteles/donas.jpg" alt="Donas variadas" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" onerror="this.style.display='none'">
+        </div>
+        <div class="p-6">
+          <h3 class="font-display text-xl text-tierra mb-1.5">Donas</h3>
+          <p class="text-tierra/65 text-sm leading-relaxed mb-4">Suaves donas artesanales bañadas en chocolate y chispas. ¡Te vas a querer llevar una caja!</p>
+          <span class="text-miel font-semibold text-sm">Desde $1.000 / unidad</span>
+        </div>
+      </article>
+
+      <!-- Berlines -->
+      <article class="reveal group bg-masa rounded-2xl overflow-hidden shadow-[0_10px_30px_-12px_rgba(59,42,31,0.25)] hover:shadow-[0_18px_40px_-14px_rgba(59,42,31,0.35)] transition-shadow">
+        <div class="h-52 overflow-hidden img-fallback">
+          <img src="images/Pasteles/berlines.jpg" alt="Berlines rellenos" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" onerror="this.style.display='none'">
+        </div>
+        <div class="p-6">
+          <h3 class="font-display text-xl text-tierra mb-1.5">Berlines Rellenos</h3>
+          <p class="text-tierra/65 text-sm leading-relaxed mb-4">Manjar o crema pastelera. Esponjosos y espolvoreados con azúcar flor al momento.</p>
+          <span class="text-miel font-semibold text-sm">Desde $1.000 / unidad</span>
+        </div>
+      </article>
+
+      <!-- Alfajores -->
+      <article class="reveal group bg-masa rounded-2xl overflow-hidden shadow-[0_10px_30px_-12px_rgba(59,42,31,0.25)] hover:shadow-[0_18px_40px_-14px_rgba(59,42,31,0.35)] transition-shadow">
+        <div class="h-52 overflow-hidden img-fallback">
+          <img src="images/Pasteles/mendocino-o-alfajor-v0-hltxhm92c3s71.jpg" alt="Alfajores con manjar" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" onerror="this.style.display='none'">
+        </div>
+        <div class="p-6">
+          <h3 class="font-display text-xl text-tierra mb-1.5">Alfajores Artesanales</h3>
+          <p class="text-tierra/65 text-sm leading-relaxed mb-4">Manjar hecho en casa entre dos galletas suaves, bañados en chocolate.</p>
+          <span class="text-miel font-semibold text-sm">Desde $1.000 / unidad</span>
+        </div>
+      </article>
+
+      <!-- Queques -->
+      <article class="reveal group bg-masa rounded-2xl overflow-hidden shadow-[0_10px_30px_-12px_rgba(59,42,31,0.25)] hover:shadow-[0_18px_40px_-14px_rgba(59,42,31,0.35)] transition-shadow">
+        <div class="h-52 overflow-hidden img-fallback">
+          <img src="images/Pasteles/queques.jpg" alt="Queque de vainilla" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" onerror="this.style.display='none'">
+        </div>
+        <div class="p-6">
+          <h3 class="font-display text-xl text-tierra mb-1.5">Queque Casero</h3>
+          <p class="text-tierra/65 text-sm leading-relaxed mb-4">Esponjoso y húmedo, recién salido del molde para acompañar lascatas de la tarde.</p>
+          <span class="text-miel font-semibold text-sm">Desde $1.000 / Unidad</span>
+        </div>
+      </article>
+
+    </div>
+  </div>
+</section>
+
+
+
+<!-- ============ CONFIANZA ============ -->
+<section id="confianza" class="relative py-24 sm:py-28 bg-marina torn-edge-down" style="--tw-bg-opacity:1;">
+  <div class="max-w-7xl mx-auto px-5 sm:px-8">
+    <div class="grid grid-cols-1 lg:grid-cols-[auto_1fr] gap-14 items-center">
+
+      <!-- Sello / badge -->
+      <div class="reveal flex justify-center lg:justify-start shrink-0">
+        <div class="sello relative w-52 h-52 sm:w-60 sm:h-60 flex flex-col items-center justify-center text-center px-4 -rotate-3">
+          <span class="text-miel text-4xl sm:text-5xl font-display font-semibold leading-none">4.7</span>
+          <div class="flex gap-0.5 my-2" aria-hidden="true">
+            <svg viewBox="0 0 20 20" fill="#E2963A" class="w-4 h-4"><path d="M10 1l2.6 5.9 6.4.6-4.8 4.3 1.4 6.2L10 14.9 4.4 18l1.4-6.2L1 7.5l6.4-.6z"/></svg>
+            <svg viewBox="0 0 20 20" fill="#E2963A" class="w-4 h-4"><path d="M10 1l2.6 5.9 6.4.6-4.8 4.3 1.4 6.2L10 14.9 4.4 18l1.4-6.2L1 7.5l6.4-.6z"/></svg>
+            <svg viewBox="0 0 20 20" fill="#E2963A" class="w-4 h-4"><path d="M10 1l2.6 5.9 6.4.6-4.8 4.3 1.4 6.2L10 14.9 4.4 18l1.4-6.2L1 7.5l6.4-.6z"/></svg>
+            <svg viewBox="0 0 20 20" fill="#E2963A" class="w-4 h-4"><path d="M10 1l2.6 5.9 6.4.6-4.8 4.3 1.4 6.2L10 14.9 4.4 18l1.4-6.2L1 7.5l6.4-.6z"/></svg>
+            <svg viewBox="0 0 20 20" fill="#E2963A" class="w-4 h-4" opacity="0.5"><path d="M10 1l2.6 5.9 6.4.6-4.8 4.3 1.4 6.2L10 14.9 4.4 18l1.4-6.2L1 7.5l6.4-.6z"/></svg>
+          </div>
+          <span class="text-masa/80 text-xs uppercase tracking-widest leading-tight">+850 reseñas<br>en Google Maps</span>
+        </div>
+      </div>
+
+      <div class="reveal">
+        <p class="uppercase tracking-[0.25em] text-miel font-semibold text-xs sm:text-sm mb-3">Confianza de barrio</p>
+        <h2 class="font-display text-3xl sm:text-4xl lg:text-5xl text-masa max-w-xl">Más de 60 años ganándonos la confianza de Valparaíso, pan a pan.</h2>
+
+        <div class="grid sm:grid-cols-3 gap-5 mt-10">
+          <blockquote class="bg-marinosc/60 border border-masa/10 rounded-xl p-5">
+            <p class="text-masa/90 text-sm leading-relaxed">"El pan amasado sabe igual que hace 20 años. Vengo cada domingo con mis hijos."</p>
+            <footer class="mt-3 text-miel text-xs font-semibold uppercase tracking-wide">— Marcela R.</footer>
+          </blockquote>
+          <blockquote class="bg-marinosc/60 border border-masa/10 rounded-xl p-5">
+            <p class="text-masa/90 text-sm leading-relaxed">"Las tortas por encargo nunca fallan. Siempre llegan a tiempo y quedan increíbles."</p>
+            <footer class="mt-3 text-miel text-xs font-semibold uppercase tracking-wide">— Felipe A.</footer>
+          </blockquote>
+          <blockquote class="bg-marinosc/60 border border-masa/10 rounded-xl p-5">
+            <p class="text-masa/90 text-sm leading-relaxed">"Atención de barrio de verdad. Se nota que hacen todo con harto cariño."</p>
+            <footer class="mt-3 text-miel text-xs font-semibold uppercase tracking-wide">— Doña Inés</footer>
+          </blockquote>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+
+<!-- ============ FOOTER / CONTACTO ============ -->
+<footer id="ubicacion" class="bg-tierra text-masa">
+  <div class="max-w-7xl mx-auto px-5 sm:px-8 py-20">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-14 items-start">
+
+      <!-- Columna izquierda: Información y datos -->
+      <div class="reveal">
+        <span class="font-display italic text-3xl font-semibold">La Nueva Marina</span>
+        <p class="mt-4 text-masa/70 max-w-md leading-relaxed">
+          Panadería tradicional en el corazón de Valparaíso. Horneamos desde las 6 AM para que el desayuno de tu casa nunca falte.
+        </p>
+
+        <div class="mt-8 space-y-3 text-sm text-masa/85">
+          <div class="flex items-start gap-3">
+            <svg class="w-5 h-5 mt-0.5 shrink-0 text-miel" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 21c-4.5-4.2-7-7.8-7-11a7 7 0 0 1 14 0c0 3.2-2.5 6.8-7 11Z"/><circle cx="12" cy="10" r="2.5"/></svg>
+            <span>Calle Clave 469, Valparaíso</span>
+          </div>
+          <div class="flex items-start gap-3">
+            <svg class="w-5 h-5 mt-0.5 shrink-0 text-miel" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path stroke-linecap="round" stroke-linejoin="round" d="M12 7v5l3 3"/></svg>
+            <span>Lunes a sábado, 6:30 – 20:00 · Domingo, 7:30 – 14:00</span>
+          </div>
+        </div>
+
+        <!-- Botones de acción -->
+        <div class="mt-8 flex flex-wrap gap-4">
+          <a href="https://wa.me/56945988286?text=Hola%20La%20Nueva%20Marina%2C%20quiero%20hacer%20un%20pedido" target="_blank" rel="noopener"
+             class="inline-flex justify-center items-center gap-2 bg-miel hover:bg-mielosc text-tierra px-6 py-3 rounded-full font-bold text-sm transition-colors">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.71.45 3.38 1.3 4.85L2 22l5.36-1.4a9.9 9.9 0 0 0 4.68 1.19h.01c5.46 0 9.9-4.45 9.9-9.9C22 6.45 17.5 2 12.04 2Zm5.8 14.16c-.24.68-1.4 1.3-1.94 1.38-.5.08-1.13.11-1.83-.12-.42-.13-.96-.31-1.66-.6-2.92-1.26-4.82-4.2-4.97-4.4-.15-.2-1.19-1.58-1.19-3.02 0-1.43.75-2.14 1.02-2.43.27-.29.58-.36.78-.36.2 0 .39 0 .56.01.18.01.42-.07.66.5.24.58.82 2 .9 2.15.07.15.12.32.02.52-.1.2-.15.32-.29.5-.15.18-.31.4-.44.53-.15.15-.3.31-.13.6.17.29.75 1.24 1.62 2 1.11.99 2.05 1.3 2.34 1.45.29.15.46.12.63-.07.17-.2.72-.85.92-1.14.2-.29.39-.24.65-.14.27.1 1.68.79 1.97.94.29.14.48.21.55.33.07.12.07.68-.17 1.35Z"/></svg>
+            Pedir por WhatsApp
+          </a>
+          <a href="https://www.google.com/maps/search/?api=1&query=Calle+Clave+469+Valparaiso" target="_blank" rel="noopener"
+             class="inline-flex justify-center items-center gap-2 border-2 border-masa/40 hover:border-masa text-masa px-6 py-3 rounded-full font-bold text-sm transition-colors">
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 21c-4.5-4.2-7-7.8-7-11a7 7 0 0 1 14 0c0 3.2-2.5 6.8-7 11Z"/><circle cx="12" cy="10" r="2.5"/></svg>
+            Cómo llegar
+          </a>
+        </div>
+      </div>
+
+      <!-- Columna derecha: Mapa interactivo de Google Maps -->
+      <div class="reveal w-full h-80 lg:h-96 rounded-2xl overflow-hidden border-2 border-masa/20 shadow-xl">
+        <iframe 
+          class="w-full h-full border-0 filter contrast-[0.9] saturate-[0.85]" 
+          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3334.54921633544!2d-71.623514!3d-33.045612!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x9689de8053a5c5c7%3A0x45b08c95610ecfb0!2sCalle%20Clave%20469%2C%20Valpara%C3%ADso!5e0!3m2!1ses!2scl!4v1710000000000!5m2!1ses!2scl" 
+          allowfullscreen="" 
+          loading="lazy" 
+          referrerpolicy="no-referrer-when-downgrade">
+        </iframe>
+      </div>
+
+    </div>
+
+    <!-- Copyright -->
+    <div class="mt-16 pt-8 border-t border-masa/15 flex flex-col sm:flex-row justify-between gap-3 text-xs text-masa/50">
+      <p>© <span id="year"></span> La Nueva Marina. Todos los derechos reservados.</p>
+      <p>Hecho con harina, horno de leña y harto cariño en Valparaíso.</p>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // Menú móvil
+  const menuToggle = document.getElementById('menu-toggle');
+  const mobileMenu = document.getElementById('mobile-menu');
+  const iconOpen = document.getElementById('icon-open');
+  const iconClose = document.getElementById('icon-close');
+
+  menuToggle.addEventListener('click', () => {
+    const isHidden = mobileMenu.classList.contains('hidden');
+    mobileMenu.classList.toggle('hidden');
+    iconOpen.classList.toggle('hidden');
+    iconClose.classList.toggle('hidden');
+    menuToggle.setAttribute('aria-expanded', String(isHidden));
+  });
+
+  document.querySelectorAll('#mobile-menu a').forEach(link => {
+    link.addEventListener('click', () => {
+      mobileMenu.classList.add('hidden');
+      iconOpen.classList.remove('hidden');
+      iconClose.classList.add('hidden');
+      menuToggle.setAttribute('aria-expanded', 'false');
+    });
+  });
+
+  // Año dinámico
+  document.getElementById('year').textContent = new Date().getFullYear();
+
+  // Reveal on scroll
+  const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const revealEls = document.querySelectorAll('.reveal');
+  if (prefersReduced) {
+    revealEls.forEach(el => el.classList.add('is-visible'));
+  } else if ('IntersectionObserver' in window) {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.15 });
+    revealEls.forEach(el => observer.observe(el));
+  } else {
+    revealEls.forEach(el => el.classList.add('is-visible'));
+  }
+</script>
+
+  <a href="https://wa.me/56945988286?text=Hola%20La%20Nueva%20Marina%2C%20quiero%20hacer%20un%20pedido" 
+   target="_blank" 
+   class="fixed bottom-6 right-6 z-[999] bg-green-500 hover:bg-green-600 text-white p-4 rounded-full shadow-lg transition-transform hover:scale-105 flex items-center justify-center">
+  <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24">
+    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.372-.025-.521-.075-.148-.67-1.613-.916-2.207-.242-.579-.487-.5-.67-.509-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+  </svg>
+</a>
+
+</body>
+</html>
